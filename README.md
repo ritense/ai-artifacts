@@ -33,13 +33,24 @@ no review. That is safe only because there is nothing here for a push to break. 
 repository at all rather than a gist: it is the one gate standing between model-authored text and a
 `git push`.
 
-## Visibility
+## Visibility — public, and not by preference
 
-Private, deliberately. Some of what gets photographed here is an unreleased internal product —
-`valtimo-platform/deployer`, `ritense/pdca-service`, `generiekzaakafhandelcomponent/atlas-internal`. The
-cost is that images in a pull request on a *public* repository render as broken for anyone outside
-Ritense; the `## Proof` table in the body still reads on its own, which is why that table is written to
-stand without the pictures.
+Private was tried first and does not work. GitHub renders a `raw.githubusercontent.com` image as a
+direct `<img src>` rather than through its camo proxy, so the **viewer's browser** fetches it — and that
+host answers `404` without an `Authorization` header, which a browser never sends on an image load. A
+private artifact repository therefore renders as broken images for *everyone*, Ritense staff included.
+Measured, not assumed: `404` unauthenticated, `200` with a token, and `404` in a logged-in browser.
 
-This repository therefore cannot serve `/propose-mockup`, which links images into comments that public
-reporters must be able to see. That needs a separate, public artifact repository.
+So the leak this repository would otherwise cause is prevented one level up instead:
+
+> **Nothing from a private target repository is published here.** `/work-ticket` B6 publishes proof only
+> when the pull request's own repository is public. A change landing in `valtimo-platform/deployer`,
+> `ritense/pdca-service` or any other private repository gets its `## Proof` table and its test output
+> and **no images at all** — the recording is not worth making an unreleased internal product's UI
+> world-readable.
+
+That is why the `## Proof` table is written to stand on its own without the pictures.
+
+This repository cannot serve `/propose-mockup` either, for the opposite reason: that skill answers
+reporters on private trackers too, and the same rule would silence it exactly where it is most useful.
+It needs its own artifact repository and its own decision.
