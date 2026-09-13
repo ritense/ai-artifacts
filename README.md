@@ -6,19 +6,28 @@ None of it is documentation, none of it is code, and nothing in it should ever b
 
 ## What is in here
 
+Two producers, two prefixes, and they never overlap:
+
 ```
 verification/<owner>-<repo>-<n>/     proof that a pull request's change was actually seen working
   run.gif                            the sequence, where the fix is a sequence
   before.png                         the symptom, on the base branch
   after.png                          the same view, fixed
+
+mockups/<owner>-<repo>-<n>/          presentational options for a directional issue, for the
+  option-a.png                       reporter to choose between before any code is written
+  option-b.png
+  README.md                          the issue URL, the date, one line per option
 ```
 
 One directory per issue, named with the full `<owner>-<repo>-<n>` slug — a bare issue number collides
 across the 187 boards in `config/issues.allow`, where `#96` exists on most of them.
 
-The files are written by `/verify-locally` E3, published here by `/work-ticket` B6, and embedded in the
-pull request body by B8 as `raw.githubusercontent.com` URLs **pinned to the commit SHA**, never to a
-branch name.
+`verification/` is written by `/verify-locally` E3, published here by `/work-ticket` B6, and embedded in
+the pull request body by B8. `mockups/` is written and published by `/propose-mockup`, and linked from
+the one comment it posts on the issue. Both embed as `raw.githubusercontent.com` URLs **pinned to the
+commit SHA**, never to a branch name: the next issue's artifacts move `main`, and a URL naming a branch
+would silently start pointing at whatever is there now.
 
 ## Two rules
 
@@ -41,16 +50,22 @@ host answers `404` without an `Authorization` header, which a browser never send
 private artifact repository therefore renders as broken images for *everyone*, Ritense staff included.
 Measured, not assumed: `404` unauthenticated, `200` with a token, and `404` in a logged-in browser.
 
-So the leak this repository would otherwise cause is prevented one level up instead:
+So the leak this repository would otherwise cause is prevented one level up instead, by a single rule
+that both producers obey:
 
-> **Nothing from a private target repository is published here.** `/work-ticket` B6 publishes proof only
-> when the pull request's own repository is public. A change landing in `valtimo-platform/deployer`,
-> `ritense/pdca-service` or any other private repository gets its `## Proof` table and its test output
-> and **no images at all** — the recording is not worth making an unreleased internal product's UI
-> world-readable.
+> **Nothing rendered from a private repository is published here.**
+>
+> `/work-ticket` B6 publishes proof only when the pull request's own repository is public. A change
+> landing in `valtimo-platform/deployer`, `ritense/pdca-service` or any other private repository gets its
+> `## Proof` table and its test output and **no images at all**.
+>
+> `/propose-mockup` is refused outright for an issue on a private tracker, before the unit is spent —
+> there is nowhere to put the pictures, and the whole point of that skill is the pictures.
 
-That is why the `## Proof` table is written to stand on its own without the pictures.
+A recording is not worth making an unreleased internal product's UI world-readable. This is why the
+`## Proof` table is written to stand on its own without them.
 
-This repository cannot serve `/propose-mockup` either, for the opposite reason: that skill answers
-reporters on private trackers too, and the same rule would silence it exactly where it is most useful.
-It needs its own artifact repository and its own decision.
+This was originally going to be two repositories, on the theory that mockups and proof wanted opposite
+visibility. They do not. A mockup is rendered from the real frontend with seed data, which is the same
+exposure as a screenshot of it. One repository, one rule. Two-thirds of the backlog sits on
+`generiekzaakafhandelcomponent/gzac-issues`, which is public, so the rule costs less than it sounds like.
